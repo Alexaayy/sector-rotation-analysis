@@ -4,9 +4,9 @@ pandas
 plotly
 pandas-datareader
 numpy
-tensorflow
+tensorflow-cpu
 scikit-learn
 seaborn
 matplotlib
 requests
-nsetools
+nsepython
