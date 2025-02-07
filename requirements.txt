@@ -6,3 +6,7 @@ pandas-datareader
 numpy
 tensorflow
 scikit-learn
+seaborn
+matplotlib
+transformers
+requests
