@@ -12,7 +12,6 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout
 from sklearn.preprocessing import MinMaxScaler
 import seaborn as sns
 import matplotlib.pyplot as plt
-from transformers import pipeline
 import requests
 import time
 from nsetools import Nse
@@ -54,8 +53,13 @@ nse = Nse()
 def fetch_nse_stocks():
     try:
         stock_codes = nse.get_stock_codes()
+        if not stock_codes:
+            raise ValueError("No stock data retrieved from NSE API")
+
         stock_list = pd.DataFrame(list(stock_codes.items()), columns=["Ticker", "Company Name"])
         stock_list = stock_list.iloc[1:]  # Remove header row
+        if "Ticker" not in stock_list.columns:
+            raise KeyError("Missing 'Ticker' column in NSE data")
         return stock_list
     except Exception as e:
         st.error(f"Error fetching NSE stock data: {e}")
@@ -63,6 +67,11 @@ def fetch_nse_stocks():
 
 
 stock_list = fetch_nse_stocks()
+
+# Ensure stock list is not empty before proceeding
+if stock_list.empty:
+    st.error("⚠️ No stock data available. Please check NSE API connectivity.")
+    st.stop()
 
 # User selects a stock
 selected_stock = st.sidebar.selectbox("Choose a Stock", stock_list["Ticker"].unique())
@@ -74,6 +83,8 @@ time_range = st.sidebar.selectbox("Select Time Range", ["1y", "5y", "10y", "max"
 def get_stock_data(ticker, period):
     try:
         data = yf.Ticker(ticker + ".NS").history(period=period)
+        if data.empty:
+            raise ValueError(f"No historical data found for {ticker}")
         data.index = data.index.tz_localize(None)
         return data
     except Exception as e:
@@ -110,7 +121,7 @@ st.subheader("📊 AI-Based Stock Recommendation for Selected Stock")
 def stock_recommendation(stock_data):
     try:
         if stock_data.empty:
-            return "⚠️ No Data Available"
+            return "⚠️ No Data Available", []
 
         recent_trend = stock_data['Close'].pct_change().rolling(window=20).mean().iloc[-1]
         latest_rsi = stock_data['RSI'].iloc[-1]
