@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -15,6 +16,9 @@ import matplotlib.pyplot as plt
 import requests
 import time
 from nsetools import Nse
+
+# Disable GPU to prevent CUDA errors on Streamlit Cloud
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # Set up Streamlit app with improved layout
 st.set_page_config(page_title="Sector Rotation Dashboard", layout="wide")
@@ -74,8 +78,8 @@ if stock_list.empty:
     st.stop()
 
 # User selects a stock
-selected_stock = st.sidebar.selectbox("Choose a Stock", stock_list["Ticker"].unique())
 time_range = st.sidebar.selectbox("Select Time Range", ["1y", "5y", "10y", "max"])
+selected_stock = st.sidebar.selectbox("Choose a Stock", stock_list["Ticker"].unique())
 
 
 # Fetch historical data for selected stock
