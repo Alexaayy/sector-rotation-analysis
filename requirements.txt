@@ -8,6 +8,5 @@ tensorflow
 scikit-learn
 seaborn
 matplotlib
-transformers
 requests
 nsetools
