@@ -15,10 +15,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import requests
 import time
-from nsetools import Nse
+from nsepython import fnolist
 
 # Disable GPU to prevent CUDA errors on Streamlit Cloud
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 # Set up Streamlit app with improved layout
 st.set_page_config(page_title="Sector Rotation Dashboard", layout="wide")
@@ -48,22 +50,13 @@ st.markdown("### A beginner-friendly dashboard to understand sector performance 
 
 st.sidebar.header("Sector Selection")
 
-# Initialize NSE API
-nse = Nse()
-
 
 # Fetch live stock data from NSE
 @st.cache_data
 def fetch_nse_stocks():
     try:
-        stock_codes = nse.get_stock_codes()
-        if not stock_codes:
-            raise ValueError("No stock data retrieved from NSE API")
-
-        stock_list = pd.DataFrame(list(stock_codes.items()), columns=["Ticker", "Company Name"])
-        stock_list = stock_list.iloc[1:]  # Remove header row
-        if "Ticker" not in stock_list.columns:
-            raise KeyError("Missing 'Ticker' column in NSE data")
+        stock_symbols = fnolist()
+        stock_list = pd.DataFrame({"Ticker": stock_symbols})
         return stock_list
     except Exception as e:
         st.error(f"Error fetching NSE stock data: {e}")
