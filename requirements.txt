@@ -3,8 +3,7 @@ yfinance
 pandas
 plotly
 pandas-datareader
-numpy==1.23.5  # Compatible with Python 3.12
-tensorflow-cpu==2.10.0  # Ensures CPU-only version
+numpy  # Automatically picks the best version
 scikit-learn
 seaborn
 matplotlib
