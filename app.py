@@ -79,7 +79,9 @@ selected_stock = st.sidebar.selectbox("Choose a Stock", stock_list["Ticker"].uni
 @st.cache_data
 def get_stock_data(ticker, period):
     try:
-        data = yf.Ticker(ticker + ".NS").history(period=period)
+        data = yf.Ticker(ticker).history(period=period)
+        if data.empty:
+            data = yf.Ticker(ticker + ".BO").history(period=period)  # Try BSE if NSE fails
         if data.empty:
             raise ValueError(f"No historical data found for {ticker}")
         data.index = data.index.tz_localize(None)
