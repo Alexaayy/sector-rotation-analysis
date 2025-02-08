@@ -3,7 +3,7 @@ yfinance
 pandas
 plotly
 pandas-datareader
-numpy  # Automatically picks the best version
+numpy
 scikit-learn
 seaborn
 matplotlib
